@@ -21,7 +21,7 @@ A C# console application that educates South African citizens about cybersecurit
 3. Type 'quit' to exit
    
  ## github URL
-   https://github.com/Nomthandazo024/Cybersecurity-Chatbot/tree/main
+   https://github.com/Nomthandazo024/Cybersecurity-Chatbot
 
 ## Requirements
 - .NET Framework 4.7.2+ or .NET 6/7/8
