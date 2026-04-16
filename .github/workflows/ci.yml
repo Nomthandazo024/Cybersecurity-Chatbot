@@ -1,0 +1,69 @@
+name: C# CI - Cybersecurity Chatbot
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: windows-latest  # Use Windows for full .NET Framework support
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup MSBuild
+      uses: microsoft/setup-msbuild@v1.1
+    
+    - name: Setup NuGet
+      uses: NuGet/setup-nuget@v1
+    
+    - name: Restore NuGet packages
+      run: nuget restore CybersecurityChatbot.sln
+    
+    - name: Build solution
+      run: msbuild CybersecurityChatbot.sln /p:Configuration=Release
+    
+    - name: Check Program.cs exists
+      run: |
+        if (Test-Path "Program.cs") {
+          Write-Host "✅ Program.cs found"
+        } else {
+          Write-Host "❌ Program.cs not found"
+          exit 1
+        }
+    
+    - name: Check for ASCII art
+      run: |
+        if (Select-String -Path "Program.cs" -Pattern "ASCII_ART") {
+          Write-Host "✅ ASCII art found"
+        } else {
+          Write-Host "❌ ASCII art missing"
+          exit 1
+        }
+    
+    - name: Check for input validation
+      run: |
+        if (Select-String -Path "Program.cs" -Pattern "string.IsNullOrWhiteSpace") {
+          Write-Host "✅ Input validation found"
+        } else {
+          Write-Host "⚠️ Input validation might be missing"
+        }
+    
+    - name: Check for response system
+      run: |
+        if (Select-String -Path "Program.cs" -Pattern "GetResponse") {
+          Write-Host "✅ Response system implemented"
+        } else {
+          Write-Host "❌ Response system missing"
+          exit 1
+        }
+    
+    - name: Run syntax check (compile)
+      run: |
+        Add-Type -Path ".\bin\Release\*.exe" -ErrorAction Stop
+        Write-Host "✅ Code compiles successfully"
+    
+    - name: Success message
+      run: Write-Host "✅ All CI checks passed! Chatbot is ready."
